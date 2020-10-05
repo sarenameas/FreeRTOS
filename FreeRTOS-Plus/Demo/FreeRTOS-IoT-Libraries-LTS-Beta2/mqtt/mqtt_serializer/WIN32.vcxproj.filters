@@ -108,7 +108,7 @@
     </ClCompile>
     <ClCompile Include="..\common\demo_logging.c" />
     <ClCompile Include="..\common\main.c" />
-    <ClCompile Include="DemoTasks\LightWeightMQTTExample.c">
+    <ClCompile Include="DemoTasks\SerializerMQTTExample.c">
       <Filter>DemoTasks</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\Source\FreeRTOS-IoT-Libraries-LTS-Beta2\c_sdk\standard\mqtt\src\mqtt_lightweight.c">
