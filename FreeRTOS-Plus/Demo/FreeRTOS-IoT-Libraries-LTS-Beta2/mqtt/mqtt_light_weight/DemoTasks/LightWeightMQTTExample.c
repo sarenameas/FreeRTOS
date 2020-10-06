@@ -744,11 +744,12 @@ static void prvCreateMQTTConnectionWithBroker( Socket_t xMQTTSocket )
     xResult = MQTT_DeserializeAck( &xIncomingPacket,
                                    &usPacketId,
                                    &xSessionPresent );
-    configASSERT( xResult == MQTTSuccess );
 
     if( xResult != MQTTSuccess )
     {
         LogInfo( ( "Connection with MQTT broker failed.\r\n" ) );
+        /* Assert after logging for this error case. */
+        configASSERT( xResult == MQTTSuccess );
     }
 }
 /*-----------------------------------------------------------*/
@@ -1184,18 +1185,19 @@ static void prvMQTTProcessIncomingPacket( Socket_t xMQTTSocket )
              * expected to be received here. Hence pass NULL for pointer to session
              * present. */
             xResult = MQTT_DeserializeAck( &xIncomingPacket, &usPacketId, NULL );
-            configASSERT( xResult == MQTTSuccess );
+
+            /* #MQTTServerRefused is returned when the broker refuses the client
+             * to subscribe to a specific topic filter. */
+            configASSERT( xResult == MQTTSuccess || xResult == MQTTServerRefused );
 
             if( xIncomingPacket.type == MQTT_PACKET_TYPE_SUBACK )
             {
                 prvMQTTUpdateSubAckStatus( &xIncomingPacket );
-
-                /* #MQTTServerRefused is returned when the broker refuses the client
-                 * to subscribe to a specific topic filter. */
-                configASSERT( xResult == MQTTSuccess || xResult == MQTTServerRefused );
             }
             else
             {
+                /* if the packet type is not a SUBACK, then the only valid result
+                 * from MQTT_DeserializeAck() is MQTTSuccess. */
                 configASSERT( xResult == MQTTSuccess );
             }
 
